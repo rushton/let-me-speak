@@ -1,0 +1,126 @@
+<html>
+<title>Let me speak</title>
+<head>
+  <script src="speakGenerator.js"></script>
+  <script src="speakClient.js"></script>
+  <script src="phrase.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet" />
+  <style type="text/css">
+    body
+    {
+      margin: 10px 0 0 10px;
+    }
+    .action{
+      height: 170px;
+      width: 170px;
+      padding: 0;
+      position: relative;
+    }
+
+    .action span.word
+    {
+      width: 100%;
+      position: absolute;
+      bottom: 5px;
+    }
+
+   #speech-input
+   {
+     font-size: 50px;
+     height: 80px;
+     line-height: 60px;
+   }
+
+   #talk-button, #undo
+   {
+     float:none;
+     height: 80px;
+     width: 80px;
+     line-height: 75px;
+   }
+  </style>
+</head>
+<body>
+   <div class="row">
+      <input id="speech-input" type="text" placeholder="Words..." class="span8">
+      <a href="javascript://" class="span1 btn btn-primary btn-large" id="talk-button">Talk</a>
+      <a href="javascript://" class="span1 btn btn-inverse btn-large" id="undo">Undo</a>
+   </div>
+   <div class="recent">
+   </div>
+   <div class="row">
+      <a href="javascript://" class="action span2 btn btn-info btn-large">
+         <span class="word">Hi</span>
+      </a>
+      <a href="javascript://" class="action span2 btn btn-info btn-large">
+         <span class="word">How are you</span>
+      </a>
+   </div>
+   <div id="audio"></div>
+   <script type="text/javascript">
+      $(document).ready(function(){
+         var phrase = new Phrase();
+         var recentPhrases = new RecentPhrases(5);
+         $('.action').click(function(){
+            phrase.add($(this).find('.word').html());
+         });
+
+         $('#undo').click(function(){
+            phrase.pop();
+         });
+
+         /**
+          * event listener for the talk button
+          */
+         $('#talk-button').click(function(){
+            speak($('#speech-input').val());
+            $('#speech-input').val('');
+            recentPhrases.add(phrase.copy());
+            phrase.clear();
+
+         })
+
+
+         // sets the change event for the phrase to update the speech input
+         phrase.change(updateSpeechInput);
+         recentPhrases.change(updateRecentPhrases);
+
+         $.getJSON('model.json');
+
+         /**
+          * updates the ui with recent phrases 
+          * @return void
+          */
+         function updateRecentPhrases()
+         {
+            $('.recent').empty();
+            $.each(recentPhrases.get(),function(k,v){
+               $('<a href="javascript://" class="recent-phrase btn btn-large"></a>').html(v.get()).appendTo('.recent');
+            });
+
+            $('.recent-phrase').unbind('click');
+            $('.recent-phrase').click(function(){
+               phrase = recentPhrases.getIndexAt($(this).index()).copy();
+               updateSpeechInput();
+
+            });
+
+         } // updateRecentPhrases()
+
+         /**
+          * updates the words input with the most up to date phrase 
+          * @return void
+          */
+         function updateSpeechInput()
+         {
+            $('#speech-input').val(phrase.get());
+         }
+      })
+   </script>
+</body>
+</html>
+
+
+
