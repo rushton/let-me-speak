@@ -1,6 +1,8 @@
+<!doctype html>
 <html>
 <title>Let me speak</title>
 <head>
+  <script src="app.js"></script>
   <script src="speakGenerator.js"></script>
   <script src="speakClient.js"></script>
   <script src="phrase.js"></script>
@@ -75,7 +77,7 @@
           * event listener for the talk button
           */
          $('#talk-button').click(function(){
-            speak($('#speech-input').val());
+            sayIt($('#speech-input').val());
             $('#speech-input').val('');
             recentPhrases.add(phrase.copy());
             phrase.clear();
@@ -116,7 +118,17 @@
          function updateSpeechInput()
          {
             $('#speech-input').val(phrase.get());
-         }
+         } // updateSpeechInput()
+
+         /**
+          * wrapper function for text-to-speech which uses user defined preferences
+          * @param string - string to be spoken
+          * @return void
+          */
+         function sayIt(phrase)
+         {
+            speak(phrase,App.preferences.speak);
+         } // sayIt()
       })
    </script>
 </body>
