@@ -11,20 +11,28 @@
     body
     {
       margin: 10px 0 0 10px;
+      background: url('images/body.gif');
     }
-    .action{
+
+    .fragment{
       height: 170px;
       width: 170px;
       padding: 0;
       position: relative;
     }
 
-    .action span.word
+    .fragment span.word
     {
       width: 100%;
       position: absolute;
       bottom: 5px;
     }
+
+   #top-bar
+   {
+      width: 100%;
+      margin: 0 20px;
+   }
 
    #speech-input
    {
@@ -44,17 +52,20 @@
 </head>
 <body>
    <div class="row">
+      <div id="top-bar">
       <input id="speech-input" type="text" placeholder="Words..." class="span8">
       <a href="javascript://" class="span1 btn btn-primary btn-large" id="talk-button">Talk</a>
       <a href="javascript://" class="span1 btn btn-inverse btn-large" id="undo">Undo</a>
+      </div>
    </div>
+   <span>Recent:</span>
    <div class="recent">
    </div>
-   <div class="row">
-      <a href="javascript://" class="action span2 btn btn-info btn-large">
+   <div id="phrases" class="row">
+      <a href="javascript://" class="fragment span2 btn btn-info btn-large">
          <span class="word">Hi</span>
       </a>
-      <a href="javascript://" class="action span2 btn btn-info btn-large">
+      <a href="javascript://" class="fragment span2 btn btn-info btn-large">
          <span class="word">How are you</span>
       </a>
    </div>
@@ -63,7 +74,7 @@
       $(document).ready(function(){
          var phrase = new Phrase();
          var recentPhrases = new RecentPhrases(5);
-         $('.action').click(function(){
+         $('.fragment').click(function(){
             phrase.add($(this).find('.word').html());
          });
 
@@ -75,10 +86,12 @@
           * event listener for the talk button
           */
          $('#talk-button').click(function(){
-            speak($('#speech-input').val());
-            $('#speech-input').val('');
-            recentPhrases.add(phrase.copy());
-            phrase.clear();
+            if (!phrase.isEmpty()){
+               speak($('#speech-input').val());
+               $('#speech-input').val('');
+               recentPhrases.add(phrase.copy());
+               phrase.clear();
+            }
 
          })
 
@@ -87,10 +100,8 @@
          phrase.change(updateSpeechInput);
          recentPhrases.change(updateRecentPhrases);
 
-         $.getJSON('model.json');
-
          /**
-          * updates the ui with recent phrases 
+          * updates the ui with recent phrases
           * @return void
           */
          function updateRecentPhrases()
@@ -110,7 +121,7 @@
          } // updateRecentPhrases()
 
          /**
-          * updates the words input with the most up to date phrase 
+          * updates the words input with the most up to date phrase
           * @return void
           */
          function updateSpeechInput()

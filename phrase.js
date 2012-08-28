@@ -59,17 +59,17 @@ var Phrase = function(){
        */
       eventuality(self);
       /**
-       * @var array - pieces of the phrase
+       * @var array - fragments of the phrase
        */
-      var pieces = [];
+      var fragments = [];
 
       return {
          /**
-          * @param piece to push onto the stack
+          * @param fragment to push onto the stack
           * @return void
           */
-         add : function(piece){
-            pieces.push(piece.trim());
+         add : function(fragment){
+            fragments.push(fragment.trim());
             self.fire('change');
          }, // add()
 
@@ -77,16 +77,16 @@ var Phrase = function(){
           * @return string - the full phrase joined by white space
           */
          get : function(){
-            return pieces.join(' ');
+            return fragments.join(' ');
          }, // get()
 
          /**
           * @return last element popped from the stack
           */
          pop : function(){
-            var piece = pieces.pop();
+            var fragment = fragments.pop();
             self.fire('change');
-            return piece;
+            return fragment;
          }, // pop()
 
          /**
@@ -94,7 +94,7 @@ var Phrase = function(){
           * @return void
           */
          clear : function(){
-            pieces = [];
+            fragments = [];
             self.fire('change');
          }, // clear()
 
@@ -113,15 +113,22 @@ var Phrase = function(){
             var copy = new Phrase();
             var i;
             var events = self.getEvents('change');
-            for(i = 0; i < pieces.length; i++){
-               copy.add(pieces[i]);
+            for(i = 0; i < fragments.length; i++){
+               copy.add(fragments[i]);
             }
 
             for(i=0; i < events.length; i++){
                copy.change(events[i]);
             }
             return copy;
-         } // copy()
+         }, // copy()
+
+         /**
+          * @return bool - tests if the phrase is empty 
+          */
+         isEmpty : function(){
+            return fragments.length == 0;
+         } // isEmpty()
       };
 
 } // Phrase
