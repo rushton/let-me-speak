@@ -103,6 +103,15 @@
 
          })
 
+         mapPreferencesToUi(App.preferences);
+         $('#preferences #save').click(function(){
+            $.extend(App.preferences, getPreferencesFromUi());
+         });
+
+         $('#preferences #test').click(function(){
+            sayIt('Hello this is a test',getPreferencesFromUi());
+         });
+
 
          // sets the change event for the phrase to update the speech input
          phrase.change(updateSpeechInput);
@@ -147,6 +156,37 @@
             speak(phrase,App.preferences.speak);
          } // sayIt()
       })
+
+      /**
+       * takes a config and maps it to form
+       * @param object - app config
+       * @return void
+       */
+      function mapPreferencesToUi(config)
+      {
+         $('#preferences #amplitude').val(config.speak.amplitude).slider('refresh');
+         $('#preferences #pitch').val(config.speak.pitch).slider('refresh');
+         $('#preferences #speed').val(config.speak.speed).slider('refresh');
+         $('#preferences #wordgap').val(config.speak.wordgap).slider('refresh');
+         $('#preferences #speakOnClick').val(config.speak.speakOnClick).slider('refresh');
+         $('#preferences #mute').val(config.speak.mute).slider('refresh');
+      } // mapConfigToUI()
+
+      function getPreferencesFromUi()
+      {
+         return  {
+            speak: {
+               amplitude: $('#preferences #amplitude').val(),
+               pitch: $('#preferences #pitch').val(),
+               speed: $('#preferences #speed').val(),
+               wordgap: $('#preferences #wordgap').val()
+            },
+            speakOnClick: $('#preferences #speakOnClick').val() === 'true' ? true : false,
+            mute: $('#preferences #mute').val() === 'true' ? true : false
+         };
+
+      }
+
    </script>
 </body>
 </html>

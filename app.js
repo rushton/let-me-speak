@@ -15,7 +15,7 @@ App.preferences = {
             amplitude: 100,
             pitch: 50,
             speed: 175,
-            wordgap: 0
+            wordgap: 2
           },
    speakOnClick: false,
    mute: false
